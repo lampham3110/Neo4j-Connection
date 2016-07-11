@@ -1,49 +1,51 @@
 package org.neo4j.readcsvcolumn;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import org.neo4j.driver.v1.AuthTokens;
+import org.neo4j.driver.v1.Driver;
+import org.neo4j.driver.v1.GraphDatabase;
+import org.neo4j.driver.v1.Session;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.graphdb.Label;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
-import org.neo4j.domain.Business;
-
-
-public class LoadCSV {
+public class LoadCSV{
+	public enum NodeType implements Label{
+		Issues, Cost, Reliability, Timeliness;
+	}
+	public enum RelationType implements RelationshipType{
+		APPLIES_TO
+	}
+	private static File DB_PATH = new File("/Users/phaml1/Documents/Neo4j/default.graphdb/import/Data.csv");
+	public static void Transaction() throws Exception
+	{
+		Driver driver = GraphDatabase.driver("bolt://localhost", AuthTokens.basic("neo4j", "dile0406"));
+		Session session = driver.session();
+		session.beginTransaction();
+		driver.close();
+	}
 	public static void main(String[] args){
-		List<Business> businesses = readBusinessFromCSV("Users/phaml1/Documents/Neo4j/default.graphdb/import/Data.csv");
-		for(Business b: businesses){
-			System.out.println(b);
-		}
-	}
-	private static List<Business> readBusinessFromCSV(String fileName){
-		List<Business> business = new ArrayList<>();
-		Path pathToFile = Paths.get(fileName);
+		GraphDatabaseService db = new GraphDatabaseFactory().newEmbeddedDatabase(DB_PATH);
 		
-		try(BufferedReader br = Files.newBufferedReader(pathToFile, StandardCharsets.US_ASCII)){
+		Transaction tx1 = db.beginTx();
+		try{
+			db.execute("USING PERIODIC COMMIT 1000\n"
+					+ "LOAD CSV WITH HEADERS FROM 'file:/Data.csv' AS ROW\n"
+					+ "MERGE(issues:Business{Description: ROW.Business_Solution_Description})\n"
+					+ "MERGE(cost:Cost{Cost: ROW.Business_Solution_Average_Cost})\n"
+					+ "MERGE(reliability:Rel{Reliability: toFloat ROW.Business_Solution_Reliability)})\n"
+					+ "MERGE(time:Time{Timeliness: toFloat(ROW.Business_Solution_Timeliness)})\n"
+					+ "MERGE(subre:SubjectReferenced)\n"
+					+ "MERGE(issues)-[r:APPLIES_TO]->(subre)\n"
+					+ "MERGE(issues)-[:APPLIES_TO]->(cost)\n"
+					+ "MERGE(issues)-[:APPLIES_TO]->(reliability)\n"
+					+ "MERGE(issues)-[:APPLIES_TO]->(time)\n");
 			
-			String line = br.readLine();
-			while(line != null){
-				String[] attributes = line.split(",");
-				Business busin = createIssues(attributes);
-				business.add(busin);
-				line = br.readLine();
-			}
-		} catch(IOException ioe){
-			ioe.printStackTrace();
+			tx1.success();
+		} finally{
+			tx1.close();
 		}
-		return business;
-	}
-	private static Business createIssues(String[] metadata){
-		String issue = metadata[0];
-		float cost = Float.parseFloat(metadata[1]);
-		float reliability = Float.parseFloat(metadata[2]);
-		float timeliness = Float.parseFloat(metadata[3]);
-		
-		return new Business(issue,cost,reliability,timeliness);
 	}
 }
-

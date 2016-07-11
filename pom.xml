@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.neo4j.driver</groupId>
-	<artifactId>neo4j-java-driver</artifactId>
-	<version>1.0.3</version>
+	<groupId>org.neo4j.test</groupId>
+	<artifactId>neo4j-java-test</artifactId>
+	<version>1.0.0.SNAPSHOT</version>
 
 	<properties>
 		<!-- neo4j OGM version -->
@@ -42,6 +42,11 @@
 			
 		<!-- Maven dependencies for Neo4j OGM 2.x -->	
 		<dependency>
+    		<groupId>org.neo4j.driver</groupId>
+    		<artifactId>neo4j-java-driver</artifactId>
+    		<version>1.0.3</version>
+</dependency>
+		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j-ogm-core</artifactId>
 			<version>2.0.3</version>
@@ -52,14 +57,12 @@
         	<artifactId>spring-data-neo4j</artifactId>
         	<version>4.1.2.RELEASE</version>
     	</dependency>
- 
+ 		
 		<dependency>
 			<groupId>org.neo4j</groupId>
 			<artifactId>neo4j-ogm-http-driver</artifactId>
 			<version>2.0.3</version>
 		</dependency>
-
-
 		<!-- Logging with SLF4J & LogBack -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -89,4 +92,16 @@
 		</dependency>
 
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>spring-releases</id>
+			<name>Spring Releases</name>
+			<url>https://repo.spring.io/libs-release</url>
+		</repository>
+		<repository>
+			<id>neo4j</id>
+			<name>Neo4j</name>
+			<url>http://m2.neo4j.org/</url>
+		</repository>
+	</repositories>
 </project>
