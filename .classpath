@@ -22,5 +22,14 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/Users/phaml1/Downloads/batch_importer_22/lib/batch-import-2.2.0.jar"/>
+	<classpathentry kind="lib" path="/Users/phaml1/Downloads/batch_importer_22/lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="/Users/phaml1/Downloads/batch_importer_22/lib/lucene-core-3.6.2.jar"/>
+	<classpathentry kind="lib" path="/Users/phaml1/Downloads/batch_importer_22/lib/mapdb-0.9.3.jar"/>
+	<classpathentry kind="lib" path="/Users/phaml1/Downloads/batch_importer_22/lib/neo4j-io-2.2.6.jar"/>
+	<classpathentry kind="lib" path="/Users/phaml1/Downloads/batch_importer_22/lib/neo4j-kernel-2.2.6.jar"/>
+	<classpathentry kind="lib" path="/Users/phaml1/Downloads/batch_importer_22/lib/neo4j-lucene-index-2.2.6.jar"/>
+	<classpathentry kind="lib" path="/Users/phaml1/Downloads/batch_importer_22/lib/neo4j-primitive-collections-2.2.6.jar"/>
+	<classpathentry kind="lib" path="/Users/phaml1/Downloads/batch_importer_22/lib/opencsv-2.3.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
