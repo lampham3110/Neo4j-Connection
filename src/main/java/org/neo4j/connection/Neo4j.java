@@ -1,4 +1,4 @@
-package org.neo4j.readcsvcolumn;
+package org.neo4j.connection;
 
 import org.neo4j.nodes.Issues;
 import java.io.File;
