@@ -1,5 +1,6 @@
 package org.neo4j.readcsvcolumn;
 
+import org.neo4j.nodes.Issues;
 import java.io.File;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -7,20 +8,17 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.neo4j.driver.v1.*;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.kernel.impl.util.*;
 import org.neo4j.helpers.collection.Iterators;
 import static org.neo4j.io.fs.FileUtils.deleteRecursively;
 
-public class LoadCSV{
+public class Neo4j{
 	public enum NodeType implements Label{
 		Issues, Cost, Reliability, Timeliness;
 	}
@@ -33,27 +31,19 @@ public class LoadCSV{
 	String resultString;
 	String columnString;
 	private static File DB_PATH = new File("/Users/phaml1/Documents/Neo4j/default.graphdb/import/Data.csv");
-	/*public static void Transaction() throws Exception
-	{
-		Driver driver = GraphDatabase.driver("bolt://localhost", AuthTokens.basic("neo4j", "dile0406"));
-		Session session = driver.session();
-		session.beginTransaction();
-		driver.close();
-	}
-	*/
-	public static void main(String[] args){
-		LoadCSV Query = new LoadCSV();
-		Query.run();
-	}
 	
+	public static void main(String[] args){
+		Neo4j test = new Neo4j();
+		test.run();
+	}
 	void run()
 	{	
 
-		clearDbPath();
+		clear();
 		GraphDatabaseService db = new GraphDatabaseFactory().newEmbeddedDatabase(DB_PATH);
 		
 		try(Transaction tx1 = db.beginTx();
-				Result result = db.execute("MATCH (n) RETURN n"))
+				Result result = db.execute("MATCH(b:Business)-[:APPLIES_TO]->(e:Time) RETURN b,e"))
 		{
 			while(result.hasNext())
 			{
@@ -67,6 +57,23 @@ public class LoadCSV{
 			        rows += "\n";
 			}
 		}
+			
+		try (Transaction something = db.beginTx();
+				Result result1 = db.execute("MATCH(b:Business)-[:APPLIES_TO]->(e:Time) RETURN b,e"))
+		{
+			Iterator<Node> n_column = result.columnAs("n");
+			for(Node node: Iterators.asIterable(n_column))
+			{
+				nodeResult = node + ": " + node.getProperties("Description");
+			}
+			List<String> columns = result.columns();
+			columnString = columns.toString();
+			resultString = db.execute("MATCH(b:Business)-[:APPLIES_TO]->(e:Time) RETURN b,e").resultAsString();
+		}
+		
+		db.shutdown();
+		}
+	}
 		/*
 		try{
 			db.execute("USING PERIODIC COMMIT 1000\n"
@@ -86,9 +93,7 @@ public class LoadCSV{
 			tx1.close();
 		}
 		*/
-		}
-	}
-	private void clearDbPath(){
+	private void clear(){
 		try{
 			deleteRecursively(DB_PATH);
 		}

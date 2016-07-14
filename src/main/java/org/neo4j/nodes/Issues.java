@@ -1,6 +1,5 @@
-package org.neo4j.noderel;
+package org.neo4j.nodes;
 import org.neo4j.ogm.annotation.*;
-
 import java.util.Collection;
 import java.util.List;
 @NodeEntity
@@ -45,4 +44,5 @@ public class Issues {
 	public void setTimeliness(List<Timeliness> timeliness){
 		this.timeliness = timeliness;
 	}
+
 }
