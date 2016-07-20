@@ -1,9 +1,8 @@
 package org.neo4j.connection;
 
-import org.neo4j.nodes.Issues;
-import java.io.File;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -15,13 +14,14 @@ import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.helpers.collection.Iterators;
+import org.neo4j.helpers.collection.IteratorUtil;
 import static org.neo4j.io.fs.FileUtils.deleteRecursively;
-
 public class Neo4j{
+	//Define Nodes//
 	public enum NodeType implements Label{
 		Issues, Cost, Reliability, Timeliness;
 	}
+	//Define Relationship//
 	public enum RelationType implements RelationshipType{
 		APPLIES_TO
 	}
@@ -30,7 +30,9 @@ public class Neo4j{
 	String nodeResult;
 	String resultString;
 	String columnString;
-	private static File DB_PATH = new File("/Users/phaml1/Documents/Neo4j/default.graphdb/import/Data.csv");
+	
+	////Set up a path to Database///
+	public static final File DB_PATH = new File("/Users/phaml1/Documents/Neo4j/default.graphdb/import/Data.csv");
 	
 	public static void main(String[] args){
 		Neo4j test = new Neo4j();
@@ -38,13 +40,13 @@ public class Neo4j{
 	}
 	void run()
 	{	
-
 		clear();
 		GraphDatabaseService db = new GraphDatabaseFactory().newEmbeddedDatabase(DB_PATH);
-		
+		/// Initialize a connection and load the query///
 		try(Transaction tx1 = db.beginTx();
 				Result result = db.execute("MATCH(b:Business)-[:APPLIES_TO]->(e:Time) RETURN b,e"))
 		{
+			///Check for more results and retrieve///
 			while(result.hasNext())
 			{
 				while ( result.hasNext() )
@@ -60,9 +62,10 @@ public class Neo4j{
 			
 		try (Transaction something = db.beginTx();
 				Result result1 = db.execute("MATCH(b:Business)-[:APPLIES_TO]->(e:Time) RETURN b,e"))
-		{
-			Iterator<Node> n_column = result.columnAs("n");
-			for(Node node: Iterators.asIterable(n_column))
+		{	
+			//Iterate through a column ///
+			Iterator<Node> n_column = result.columnAs("Business");
+			for(Node node: IteratorUtil.asIterable(n_column))
 			{
 				nodeResult = node + ": " + node.getProperties("Description");
 			}
@@ -93,12 +96,15 @@ public class Neo4j{
 			tx1.close();
 		}
 		*/
-	private void clear(){
-		try{
-			deleteRecursively(DB_PATH);
-		}
-		catch(IOException e){
-			throw new RuntimeException(e);
-		}
+	private void clear()
+    {
+        try
+        {
+            deleteRecursively( DB_PATH );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( e );
+        	}
+    	}
 	}
-}
