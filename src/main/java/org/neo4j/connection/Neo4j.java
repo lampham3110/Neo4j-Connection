@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import.org.neo4j.driver.v1.*;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.Node;
@@ -18,6 +19,9 @@ import org.neo4j.helpers.collection.IteratorUtil;
 import static org.neo4j.io.fs.FileUtils.deleteRecursively;
 public class Neo4j{
 	//Define Nodes//
+	Driver driver = GraphDatabase.driver("bolt://localhost", AuthTokens.basic("neo4j","dile0406"));
+	Session session = driver.session();
+
 	public enum NodeType implements Label{
 		Issues, Cost, Reliability, Timeliness;
 	}
@@ -107,4 +111,6 @@ public class Neo4j{
             throw new RuntimeException( e );
         	}
     	}
+	session.close();
+	driver.close();
 	}
